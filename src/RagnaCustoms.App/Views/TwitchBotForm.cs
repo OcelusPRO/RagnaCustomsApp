@@ -33,7 +33,7 @@ namespace RagnaCustoms.App.Views
         public Configuration _configuration;
         private JoinedChannel _joinedChannel;
         
-        private readonly List<Song> _songList = new();
+        public readonly List<Song> _songList = new();
         private bool _twitchBotEnabled;
 
         private TwitchClient _twitchClient;
@@ -296,6 +296,10 @@ namespace RagnaCustoms.App.Views
             }).Start();
         }
 
+        public Song GetCurrentSong()
+        {
+            return _lastPlayedSong;
+        }
         private void AddRequest(string requestId, OnMessageReceivedArgs e)
         {
             if (!QueueIsOpen)
