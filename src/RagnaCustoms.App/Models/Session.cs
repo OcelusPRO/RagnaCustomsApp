@@ -17,6 +17,8 @@
         public string HitSpeed { get; set; }
         public string Percentage2 { get; set; }
         public int Combos { get; set; }
+        public bool OnTheHub { get; set; } = false;
+        public bool CanSendInTchat { get; set; } = true;
 
         public override string ToString()
         {

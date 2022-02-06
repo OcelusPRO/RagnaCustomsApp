@@ -41,15 +41,20 @@ namespace RagnaCustoms.App.Views
         public Dictionary<string, ICommandes> Commandes = new();
 
         public bool QueueIsOpen = true;
-        private string _lastPlayedHash = string.Empty;
+        private Song _lastPlayedSong = new Song();
         
         private void OnFileChange(object sender, FileSystemEventArgs e)
         {
 
             var songLevelLineHint = "LogTemp: Warning: Song level str";
             var songNameLineHint = "LogTemp: Loading song";
+            
+            var successLoad = "LogTemp: FMOD Song successfully loaded !";
+            var successLoad2 = "LogTemp: About to load song";
+            
             var songScoreDetailLineHint = "LogTemp: Warning: Notes missed :";
             var songScoreLineHint = "raw distance =";
+            var loadHub = "LogLoadingSplash:";
 
             var session = new Session();
             
@@ -76,7 +81,7 @@ namespace RagnaCustoms.App.Views
                     var filesHashs = songDatFiles.Select(ComputeMd5).OrderBy(hash => hash);
                     var concatenatedHashs = string.Concat(filesHashs);
                     session.Song.Hash = ComputeMd5(concatenatedHashs);
-                    _lastPlayedHash = session.Song.Hash;
+                    _lastPlayedSong = session.Song;
                 }
                 else if (line.Contains(songScoreLineHint))
                 {
@@ -85,9 +90,30 @@ namespace RagnaCustoms.App.Views
                     session.Score = line.Substring(startIndex, endIndex - startIndex).Trim(' ', '.'); 
                     if (session.Song.Hash is null) continue; 
                 }
+                else if (line.Contains(successLoad) || line.Contains(successLoad2))
+                {
+                    session.CanSendInTchat = false;
+                }
+                else if (line.Contains(loadHub))
+                {
+                    session.OnTheHub = true;
+                }
             }
+
+            if (session.CanSendInTchat)
+            { 
+                var twitchMessage = _songList.Contains(session.Song) ? "" : ""; // TODO : replace with config message
+                twitchMessage = twitchMessage
+                    .Replace("{song.name}", session.Song.Name)
+                    .Replace("{song.level}", session.Song.Level)
+                    .Replace("{song.hash}", session.Song.Hash)
+                    .Replace("{song.requester}", session.Song.Requester);
+                _twitchClient.SendMessage(_joinedChannel.Channel, twitchMessage);
+            }
+            
             if (session.Score is null) return;
             if (session.Song.Hash is null) return;
+            if (!session.OnTheHub) return;
             if (_songList.All(song => song.Hash != session.Song.Hash)) return;
             Thread.Sleep(2000);
             RemoveAtSongRequestInList(session.Song.Hash);
