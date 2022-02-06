@@ -363,7 +363,7 @@ namespace RagnaCustoms.App.Views
 
         public void RemoveLastPlayerSong()
         {
-            RemoveAtSongRequestInList(_lastPlayedHash);
+            RemoveAtSongRequestInList(_lastPlayedSong.Hash);
         }
         public void RemoveAtSongRequestInList(string hash)
         {

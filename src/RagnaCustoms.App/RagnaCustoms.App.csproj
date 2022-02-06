@@ -71,6 +71,7 @@
         <Compile Include="Commandes\List\BaseCommand.cs" />
         <Compile Include="Commandes\List\CancelCommand.cs" />
         <Compile Include="Commandes\List\CloseQueue.cs" />
+        <Compile Include="Commandes\List\GetCurrentSong.cs" />
         <Compile Include="Commandes\List\HelpCommand.cs" />
         <Compile Include="Commandes\List\MyLangCommand.cs" />
         <Compile Include="Commandes\List\NextCommand.cs" />
